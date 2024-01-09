@@ -60,7 +60,7 @@ public class Admin extends Staff {
     }
 
     public boolean isValidCountry(String country) {
-        String regex = "^[A-Z][a-zA-Z]+$";
+        String regex = "^[A-Z][a-zA-Z]+(?:\\s[A-Z][a-zA-Z]+)?$";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(country);

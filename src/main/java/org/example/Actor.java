@@ -74,12 +74,8 @@ public class Actor implements Comparable {
         return false;
     }
     public void modifyPerformance(String oldTitle, String newTitle, String oldType, String newType) {
-        for (Map.Entry<String, String> entry : performances.entrySet()) {
-            if (entry.getKey().equals(oldTitle) && entry.getValue().equals(oldType)) {
-                performances.remove(oldTitle, oldType);
-                performances.put(newTitle, newType);
-            }
-        }
+        performances.remove(oldTitle, oldType);
+        performances.put(newTitle, newType);
     }
     public void removePerformance(String title, String type) {
         performances.remove(title, type);

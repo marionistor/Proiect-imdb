@@ -13,6 +13,8 @@ public class SeeRequests extends JFrame {
     private JLabel description;
     private JLabel solver;
     private JScrollPane scroll;
+    private Staff contributor;
+
     public SeeRequests(User loggedInUser) {
         super("Created Requests");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -74,11 +76,14 @@ public class SeeRequests extends JFrame {
                 cancelRequest.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (type.equals("MOVIE_ISSUE") || type.equals("ACTOR_ISSUE")) {
+                            contributor = IMDB.getInstance().contributorUser(request.getTitleName());
+                        }
                         if (loggedInUser instanceof Regular) {
-                            ((Regular) loggedInUser).removeCreatedRequest(request);
+                            ((Regular) loggedInUser).removeRequest(request, contributor);
                         }
                         if (loggedInUser instanceof Contributor) {
-                            ((Contributor) loggedInUser).removeCreatedRequest(request);
+                            ((Contributor) loggedInUser).removeRequest(request, contributor);
                         }
                         new SeeRequests(loggedInUser);
                         dispose();

@@ -56,7 +56,7 @@ public class AddSeason extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String name = Season.getText();
                 if (!episodeList.isEmpty()) {
-                    if (s.getAddedSeasons() >= numSeasons) {
+                    if (s.getAddedSeasons() >= numSeasons && operationType.equals("Add to system")) {
                         JOptionPane.showMessageDialog(AddSeason.this, "There must be " + numSeasons + " season(s)!");
                     } else {
                         List<Episode> copyList = new ArrayList<>(episodeList);

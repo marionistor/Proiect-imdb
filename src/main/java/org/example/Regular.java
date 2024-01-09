@@ -29,7 +29,7 @@ public class Regular extends User implements RequestsManager {
     @Override
     public void createRequest(Request r, Staff contributor) {
         if (r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
-            new Admin.RequestHolder().addTeamRequest(r);
+            Admin.RequestHolder.TeamRequestsList.add(r);
         } else {
             contributor.addIndividualRequest(r);
         }
@@ -39,7 +39,7 @@ public class Regular extends User implements RequestsManager {
     @Override
     public void removeRequest(Request r, Staff contributor) {
         if (r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
-            new Admin.RequestHolder().removeTeamRequest(r);
+            Admin.RequestHolder.TeamRequestsList.remove(r);
         } else {
             contributor.removeIndividualRequest(r);
         }
