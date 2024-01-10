@@ -62,6 +62,7 @@ public abstract class Staff extends User implements StaffInterface {
                 Admin.commonContributionsList.remove(production);
         }
         production.removeObserver(this, Event.ADDED_PRODUCTION_REVIEW);
+
         IMDB.getInstance().removeProduction(production);
         IMDB.getInstance().removeFromUsersFavorites(production);
     }

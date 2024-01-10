@@ -33,7 +33,7 @@ public class Contributor extends Staff implements RequestsManager {
         } else {
             contributor.addIndividualRequest(r);
             User<?> solverUser = IMDB.getInstance().getUser(r.getSolver());
-            creatorUser.notifyUser(solverUser, Event.RECEIVED_REQUEST, r.getDescription());
+            solverUser.notifyUser(creatorUser, Event.RECEIVED_REQUEST, r.getDescription());
         }
         addCreatedRequest(r);
     }
@@ -54,5 +54,6 @@ public class Contributor extends Staff implements RequestsManager {
             solverUser.removeNotifications(notification);
         }
         removeCreatedRequest(r);
+        IMDB.getInstance().getRequestsList().remove(r);
     }
 }

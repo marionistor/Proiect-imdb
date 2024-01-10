@@ -60,15 +60,16 @@ public class WriteRating extends JFrame {
                     production.updateAverageRating();
                     production.addObserver(loggedInUser, Event.RATED_PRODUCTION_REVIEW);
                     if (production instanceof Movie) {
-                        production.notifyObserver(Event.FAVORITE_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
-                        production.notifyObserver(Event.RATED_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
-                        production.notifyObserver(Event.ADDED_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                        production.notifyObserver(Event.FAVORITE_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade(), newRating.getUsername());
+                        production.notifyObserver(Event.RATED_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade(), newRating.getUsername());
+                        production.notifyObserver(Event.ADDED_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade(), newRating.getUsername());
                     } else {
-                        production.notifyObserver(Event.FAVORITE_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
-                        production.notifyObserver(Event.RATED_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
-                        production.notifyObserver(Event.ADDED_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                        production.notifyObserver(Event.FAVORITE_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade(), newRating.getUsername());
+                        production.notifyObserver(Event.RATED_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade(), newRating.getUsername());
+                        production.notifyObserver(Event.ADDED_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade(), newRating.getUsername());
                     }
                     dispose();
+                    loggedInUser.updateExperience(new ReviewStrategy());
                     new ProductionInfo(production, loggedInUser);
                     previous.dispose();
                 } catch (Exception exception) {

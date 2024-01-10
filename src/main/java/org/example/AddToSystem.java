@@ -111,6 +111,9 @@ public class AddToSystem extends JFrame {
                                 a.setImageIcon(nameStr);
                                 a.setBiography(bioStr);
                                 loggedInUser.addActorSystem(a);
+                                if (loggedInUser instanceof Contributor) {
+                                    loggedInUser.updateExperience(new NewContributionStrategy());
+                                }
                                 dispose();
                                 previous.dispose();
                                 new OptionsMenu(loggedInUser);
@@ -233,6 +236,7 @@ public class AddToSystem extends JFrame {
                                             p.setAverageRating(ratingDouble);
                                             ((Movie) p).setReleaseYear(yearInt);
                                             loggedInUser.addProductionSystem(p);
+                                            loggedInUser.updateExperience(new NewContributionStrategy());
                                             dispose();
                                             previous.dispose();
                                             new OptionsMenu(loggedInUser);
@@ -311,6 +315,7 @@ public class AddToSystem extends JFrame {
                                             p.setAverageRating(ratingDouble);
                                             ((Series) p).setReleaseYear(yearInt);
                                             loggedInUser.addProductionSystem(p);
+                                            loggedInUser.updateExperience(new NewContributionStrategy());
                                             dispose();
                                             previous.dispose();
                                             new OptionsMenu(loggedInUser);

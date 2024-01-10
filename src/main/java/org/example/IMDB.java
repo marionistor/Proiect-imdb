@@ -35,6 +35,10 @@ public class IMDB {
         return actorsList;
     }
 
+    public List<Request> getRequestsList() {
+        return requestsList;
+    }
+
     public List<Production> getProductionsList() {
         return productionsList;
     }
@@ -43,6 +47,15 @@ public class IMDB {
     }
     public List<User<?>> getUsersList() {
         return usersList;
+    }
+    public List<Staff> getStaffList() {
+        List<Staff> staffList = new ArrayList<>();
+        for (User<?> user : usersList) {
+            if (user instanceof Staff) {
+                staffList.add((Staff) user);
+            }
+        }
+        return staffList;
     }
     public void addUser(User<?> user) {
         usersList.add(user);
@@ -357,6 +370,7 @@ public class IMDB {
                         Request request = new Request();
                         request.setRequestType(RequestTypes.OTHERS);
                         request.setSolver("ADMIN");
+                        request.setCreator("testRegular");
                         String description = "Please add the actor " + actor +" with performance "  + title + " and type " + type + ".";
                         request.setDescription(description);
                         request.setTitleName(actor.toString());
@@ -366,7 +380,6 @@ public class IMDB {
                         LocalDateTime dateTime = LocalDateTime.parse(dateStr, DTFormatter);
                         request.setDate(dateTime);
                         requestsList.add(request);
-                        Admin.RequestHolder.TeamRequestsList.add(request);
                     }
                     newProduction.addActor(actor.toString());
                 }
@@ -561,6 +574,12 @@ public class IMDB {
                 User<?> solverUser = getUserByName(request.getSolver());
                 ((Staff) solverUser).getIndividualRequestsList().add(request);
                 creatorUser.notifyUser(solverUser, Event.RECEIVED_REQUEST, request.getDescription());
+            }
+            if (creatorUser instanceof Regular) {
+                ((Regular) creatorUser).addCreatedRequest(request);
+            }
+            if (creatorUser instanceof Contributor) {
+                ((Contributor) creatorUser).addCreatedRequest(request);
             }
         }
 

@@ -33,7 +33,7 @@ public class ViewNotifications extends JFrame {
             for (String notification : notificationsList) {
                 JPanel notificationPanel = new JPanel();
                 notificationPanel.setBackground(Color.darkGray);
-                notificationPanel.setLayout(new BoxLayout(notificationPanel, BoxLayout.Y_AXIS));
+                notificationPanel.setLayout(new FlowLayout());
 
                 JLabel notificationMessage = new JLabel(notification);
                 notificationMessage.setForeground(Color.WHITE);

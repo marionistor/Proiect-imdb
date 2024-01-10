@@ -15,7 +15,7 @@ public class SeeRequests extends JFrame {
     private JScrollPane scroll;
     private Staff contributor;
 
-    public SeeRequests(User loggedInUser) {
+    public SeeRequests(User<?> loggedInUser) {
         super("Created Requests");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -44,7 +44,7 @@ public class SeeRequests extends JFrame {
                 JPanel requestPanel = new JPanel();
                 requestPanel.setBackground(Color.darkGray);
                 type = new JLabel("" + request.getRequestType());
-                if (type.equals("MOVIE_ISSUE") || type.equals("ACTOR_ISSUE")) {
+                if (request.getRequestType() == RequestTypes.MOVIE_ISSUE || request.getRequestType() == RequestTypes.ACTOR_ISSUE) {
                     requestPanel.setLayout(new GridLayout(7, 1));
                     titleName = new JLabel(request.getTitleName());
                     titleName.setForeground(Color.WHITE);
@@ -76,7 +76,7 @@ public class SeeRequests extends JFrame {
                 cancelRequest.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (type.equals("MOVIE_ISSUE") || type.equals("ACTOR_ISSUE")) {
+                        if (request.getRequestType() == RequestTypes.MOVIE_ISSUE || request.getRequestType() == RequestTypes.ACTOR_ISSUE) {
                             contributor = IMDB.getInstance().contributorUser(request.getTitleName());
                         }
                         if (loggedInUser instanceof Regular) {

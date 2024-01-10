@@ -59,7 +59,7 @@ public class ActorInfo extends JFrame {
         performancesPanel.add(new JLabel());
 
         for (Map.Entry<String, String> performance : actor.getPerformances().entrySet()) {
-            JLabel performanceLabel = new JLabel(performance.getKey() + ", (" + performance.getValue() + ")");
+            JLabel performanceLabel = new JLabel(performance.getKey() + " (" + performance.getValue() + ")");
             performanceLabel.setForeground(Color.WHITE);
             performancesPanel.add(performanceLabel);
         }

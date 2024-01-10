@@ -47,26 +47,6 @@ public class AddActors extends JFrame {
                         JOptionPane.showMessageDialog(AddActors.this, "Actor already added!");
                     } else {
                         p.addActor(name);
-                        if (!IMDB.getInstance().searchActorName(name)) {
-                            Actor a = new Actor();
-                            a.setName(name);
-                            a.addPerformance(p.getTitle(), type);
-
-                            Request request = new Request();
-                            request.setRequestType(RequestTypes.OTHERS);
-                            request.setSolver("ADMIN");
-                            String description = "Please add the actor " + name +".";
-                            request.setDescription(description);
-                            request.setTitleName(name);
-                            ZonedDateTime date = ZonedDateTime.now();
-                            DateTimeFormatter DTFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-                            String dateStr = date.format(DTFormatter);
-                            LocalDateTime dateTime = LocalDateTime.parse(dateStr, DTFormatter);
-                            request.setDate(dateTime);
-                            new Admin.RequestHolder().addTeamRequest(request);
-                            // create request
-                            // notify
-                        }
                         JOptionPane.showMessageDialog(AddActors.this, "Added Actor " + name + "!");
                         Actor.setText("");
                     }

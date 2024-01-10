@@ -172,8 +172,8 @@ public abstract class User<T extends Comparable<T>> implements Observer {
                 update(notification);
                 break;
             case ADMIN_RECEIVED_REQUESTS:
-                notification = "Cerere noua pentru echipa de admini de la \"" + user.getUsername() + "\": " + request;
-                update(notification);
+                notification = "Cerere noua pentru echipa de admini de la \"" + getUsername() + "\": " + request;
+                user.update(notification);
                 break;
             default:
                 break;
@@ -192,4 +192,7 @@ public abstract class User<T extends Comparable<T>> implements Observer {
     }
 
     // update user xp
+    public void updateExperience(ExperienceStrategy gainedExperience) {
+        userExperience += gainedExperience.calculateExperience();
+    }
 }

@@ -28,7 +28,7 @@ public class Regular extends User implements RequestsManager {
     }
     @Override
     public void createRequest(Request r, Staff contributor) {
-        User<?> creatorUser = IMDB.getInstance().getUser(r.getCreator());
+        User<?> creatorUser = IMDB.getInstance().getUserByName(r.getCreator());
         if (r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
             Admin.RequestHolder.TeamRequestsList.add(r);
             for (Admin admin : IMDB.getInstance().getAdmins()) {
@@ -36,8 +36,8 @@ public class Regular extends User implements RequestsManager {
             }
         } else {
             contributor.addIndividualRequest(r);
-            User<?> solverUser = IMDB.getInstance().getUser(r.getSolver());
-            creatorUser.notifyUser(solverUser, Event.RECEIVED_REQUEST, r.getDescription());
+            User<?> solverUser = IMDB.getInstance().getUserByName(r.getSolver());
+            solverUser.notifyUser(creatorUser, Event.RECEIVED_REQUEST, r.getDescription());
         }
         addCreatedRequest(r);
     }
@@ -54,9 +54,10 @@ public class Regular extends User implements RequestsManager {
         } else {
             contributor.removeIndividualRequest(r);
             notification = "Cerere noua de la \"" + r.getCreator() + "\": " +r.getDescription();
-            User<?> solverUser = IMDB.getInstance().getUser(r.getSolver());
+            User<?> solverUser = IMDB.getInstance().getUserByName(r.getSolver());
             solverUser.removeNotifications(notification);
         }
         removeCreatedRequest(r);
+        IMDB.getInstance().getRequestsList().remove(r);
     }
 }

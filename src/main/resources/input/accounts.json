@@ -260,7 +260,7 @@
     "information": {
       "credentials": {
         "email": "olivia.taylor@example.com",
-        "password": "0l!v!@#29T@yl0r"
+          "password": "0l!v!@#29T@yl0r"
       },
       "name": "Olivia Taylor",
       "country": "South Africa",
@@ -350,7 +350,7 @@
     "information": {
       "credentials": {
         "email": "benjamin.taylor@example.com",
-        "password": "B3nj@m!n!#34T@yl0r"
+          "password": "B3nj@m!n!#34T@yl0r"
       },
       "name": "Benjamin Taylor",
       "country": "Germany",

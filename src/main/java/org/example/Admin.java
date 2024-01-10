@@ -162,6 +162,14 @@ public class Admin extends Staff {
         User<?> user = IMDB.getInstance().getUserByName(username);
         IMDB.getInstance().removeUser(user);
         for (Production production : IMDB.getInstance().getProductionsList()) {
+            for (Rating rating : production.getRatings()) {
+                if (rating.getUsername().equals(username)) {
+                    production.removeObserver(user, Event.RATED_PRODUCTION_REVIEW);
+                }
+            }
+        }
+
+        for (Production production : IMDB.getInstance().getProductionsList()) {
             production.getRatings().removeIf(rating -> rating.getUsername().equals(username));
             production.updateAverageRating();
         }
@@ -169,6 +177,25 @@ public class Admin extends Staff {
         for (Object favorite : user.getFavoritesSet()) {
             if (favorite instanceof Production) {
                 ((Production) favorite).removeObserver(user, Event.FAVORITE_PRODUCTION_REVIEW);
+            }
+        }
+        String notification;
+        for (Request r : RequestHolder.TeamRequestsList) {
+            if (r.getCreator().equals(username)) {
+                for (Admin admin : IMDB.getInstance().getAdmins()) {
+                    notification = "Cerere noua pentru echipa de admini de la \"" + r.getCreator() + "\": " + r.getDescription();
+                    admin.removeNotifications(notification);
+                }
+            }
+        }
+
+        for (Staff staffUser : IMDB.getInstance().getStaffList()) {
+            for (Request r : staffUser.getIndividualRequestsList()) {
+                if (r.getCreator().equals(username)) {
+                    notification = "Cerere noua de la \"" + r.getCreator() + "\": " +r.getDescription();
+                    User<?> solverUser = IMDB.getInstance().getUserByName(r.getSolver());
+                    solverUser.removeNotifications(notification);
+                }
             }
         }
 

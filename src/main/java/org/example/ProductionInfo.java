@@ -26,7 +26,7 @@ public class ProductionInfo extends JFrame {
     private JButton removeFromFavorites;
     private JButton refresh;
 
-    public ProductionInfo(Production production, User loggedInUser) {
+    public ProductionInfo(Production production, User<?> loggedInUser) {
         super("Production info");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

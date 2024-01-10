@@ -36,7 +36,7 @@ public class ViewReceivedRequests extends JFrame {
             requestsPanel.add(noRequestsMsg);
             getContentPane().add(requestsPanel);
         } else {
-            setSize(400, 700);
+            setSize(1000, 700);
 
             requestsPanel.setLayout(new GridLayout(requestList.size(), 1));
 
@@ -44,7 +44,7 @@ public class ViewReceivedRequests extends JFrame {
                 JPanel requestPanel = new JPanel();
                 requestPanel.setBackground(Color.darkGray);
                 type = new JLabel("" + request.getRequestType());
-                if (type.equals("MOVIE_ISSUE") || type.equals("ACTOR_ISSUE")) {
+                if (request.getRequestType() == RequestTypes.MOVIE_ISSUE || request.getRequestType() == RequestTypes.ACTOR_ISSUE) {
                     requestPanel.setLayout(new GridLayout(7, 1));
                     titleName = new JLabel(request.getTitleName());
                     titleName.setForeground(Color.WHITE);
@@ -81,14 +81,26 @@ public class ViewReceivedRequests extends JFrame {
                 rejectRequest.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        String notification;
                         if (request.getSolver().equals("ADMIN")) {
                             Admin.RequestHolder.TeamRequestsList.remove(request);
+                            for (Admin admin : IMDB.getInstance().getAdmins()) {
+                                notification = "Cerere noua pentru echipa de admini de la \"" + request.getCreator() + "\": " + request.getDescription();
+                                admin.removeNotifications(notification);
+                            }
                         } else {
                             loggedInUser.getIndividualRequestsList().remove(request);
+                            notification = "Cerere noua de la \"" + request.getCreator() + "\": " +request.getDescription();
+                            User<?> solverUser = IMDB.getInstance().getUserByName(request.getSolver());
+                            solverUser.removeNotifications(notification);
                         }
-                        if (request.getCreator() != null) {
-                            User<?> creatorUser = IMDB.getInstance().getUser(request.getCreator());
-                            creatorUser.notifyUser(loggedInUser, Event.REJECTED_REQUEST, null);
+                        User<?> creatorUser = IMDB.getInstance().getUserByName(request.getCreator());
+                        creatorUser.notifyUser(loggedInUser, Event.REJECTED_REQUEST, null);
+                        if (creatorUser instanceof Regular) {
+                            ((Regular) creatorUser).getCreatedRequests().remove(request);
+                        }
+                        if (creatorUser instanceof Contributor) {
+                            ((Contributor) creatorUser).getCreatedRequests().remove(request);
                         }
                         new ViewReceivedRequests(loggedInUser);
                         dispose();
@@ -100,14 +112,32 @@ public class ViewReceivedRequests extends JFrame {
                 markSolved.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (request.getCreator() != null && request.getRequestType() != RequestTypes.DELETE_ACCOUNT && request.getRequestType() != RequestTypes.OTHERS) {
+                            User<?> creatorUser = IMDB.getInstance().getUserByName(request.getCreator());
+                            creatorUser.updateExperience(new SolvedRequestStrategy());
+                        }
+                        String notification;
                         if (request.getSolver().equals("ADMIN")) {
                             Admin.RequestHolder.TeamRequestsList.remove(request);
+                            for (Admin admin : IMDB.getInstance().getAdmins()) {
+                                notification = "Cerere noua pentru echipa de admini de la \"" + request.getCreator() + "\": " + request.getDescription();
+                                admin.removeNotifications(notification);
+                            }
                         } else {
                             loggedInUser.getIndividualRequestsList().remove(request);
+                            notification = "Cerere noua de la \"" + request.getCreator() + "\": " +request.getDescription();
+                            User<?> solverUser = IMDB.getInstance().getUserByName(request.getSolver());
+                            solverUser.removeNotifications(notification);
                         }
-                        if (request.getCreator() != null) {
-                            User<?> creatorUser = IMDB.getInstance().getUser(request.getCreator());
+                        User<?> creatorUser = IMDB.getInstance().getUserByName(request.getCreator());
+                        if (request.getRequestType() != RequestTypes.DELETE_ACCOUNT) {
                             creatorUser.notifyUser(loggedInUser, Event.SOLVED_REQUEST, null);
+                        }
+                        if (creatorUser instanceof Regular) {
+                            ((Regular) creatorUser).getCreatedRequests().remove(request);
+                        }
+                        if (creatorUser instanceof Contributor) {
+                            ((Contributor) creatorUser).getCreatedRequests().remove(request);
                         }
                         new ViewReceivedRequests(loggedInUser);
                         dispose();
