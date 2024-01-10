@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
-public abstract class Production implements Comparable<Object> {
+public abstract class Production implements Comparable<Object>, Subject {
     private String title;
     private List<String> directors;
     private List<String> actors;
@@ -17,15 +17,55 @@ public abstract class Production implements Comparable<Object> {
     private String plot;
     private Double averageRating;
     private ImageIcon imageIcon;
+    private  HashMap<Event, List<User<?>>> userObservers;
 
     public Production() {
         directors = new ArrayList<>();
         actors = new ArrayList<>();
         genres = new ArrayList<>();
         ratings = new ArrayList<>();
+        userObservers = new HashMap<>();
+        userObservers = new HashMap<>();
+        userObservers.put(Event.ADDED_PRODUCTION_REVIEW, new ArrayList<>());
+        userObservers.put(Event.FAVORITE_PRODUCTION_REVIEW, new ArrayList<>());
+        userObservers.put(Event.RATED_PRODUCTION_REVIEW, new ArrayList<>());
     }
 
-    public ImageIcon getImage (String title) {
+    @Override
+    public void addObserver(User<?> user, Event event) {
+        userObservers.get(event).add(user);
+    }
+
+    @Override
+    public void removeObserver(User<?> user, Event event) {
+        userObservers.get(event).remove(user);
+    }
+
+    @Override
+    public void notifyObserver(Event event, String type, String title, String username, int rating) {
+        String notification;
+
+        for (User<?> user : userObservers.get(event)) {
+            switch (event) {
+                case FAVORITE_PRODUCTION_REVIEW:
+                    notification = "\"" + type + "\"" + " pe care il ai in lista de favorite a primit un review de la utilizatorul \"" + username + "\" -> " + rating;
+                    user.update(notification);
+                    break;
+                case RATED_PRODUCTION_REVIEW:
+                    notification = "\"" + type + "\"" + " pe care l-ai evaluat a primit un review de la utilizatorul \"" + username + "\" -> " + rating;
+                    user.update(notification);
+                    break;
+                case ADDED_PRODUCTION_REVIEW:
+                    notification = "\"" + type + "\"" + " pe care l-ai adaugat a primit un review de la utilizatorul \"" + username + "\" -> " + rating;
+                    user.update(notification);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+        public ImageIcon getImage (String title) {
         String filePath = "src/main/resources/images/" + title + ".jpg";
         Path path = Paths.get(filePath);
         boolean fileExists = Files.exists(path);
@@ -41,6 +81,7 @@ public abstract class Production implements Comparable<Object> {
 
         return new ImageIcon(resizedImage);
     }
+
     public void setImageIcon(String title) {
         this.imageIcon = getImage(title);
     }

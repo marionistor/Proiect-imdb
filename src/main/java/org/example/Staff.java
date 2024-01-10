@@ -44,6 +44,7 @@ public abstract class Staff extends User implements StaffInterface {
     @Override
     public void addProductionSystem(Production p) {
         IMDB.getInstance().addProduction(p);
+        p.addObserver(this, Event.ADDED_PRODUCTION_REVIEW);
         Contributions.add(p);
     }
 
@@ -60,6 +61,7 @@ public abstract class Staff extends User implements StaffInterface {
         if (this instanceof Admin) {
                 Admin.commonContributionsList.remove(production);
         }
+        production.removeObserver(this, Event.ADDED_PRODUCTION_REVIEW);
         IMDB.getInstance().removeProduction(production);
         IMDB.getInstance().removeFromUsersFavorites(production);
     }

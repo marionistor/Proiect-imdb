@@ -72,7 +72,7 @@ public class SeeRequests extends JFrame {
                 requestPanel.add(solver);
 
                 JButton cancelRequest = new JButton("Cancel Request");
-                cancelRequest.setBackground(Color.YELLOW);
+                cancelRequest.setBackground(Color.RED);
                 cancelRequest.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -89,7 +89,12 @@ public class SeeRequests extends JFrame {
                         dispose();
                     }
                 });
-                requestPanel.add(cancelRequest);
+                JPanel buttonPanel = new JPanel();
+                buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+                buttonPanel.setBackground(Color.darkGray);
+                buttonPanel.add(cancelRequest);
+
+                requestPanel.add(buttonPanel);
                 requestPanel.add(new JLabel());
                 requestsPanel.add(requestPanel);
             }

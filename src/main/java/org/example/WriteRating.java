@@ -12,7 +12,7 @@ public class WriteRating extends JFrame {
     private JComboBox<Integer> grade;
     private JButton addRating;
 
-    public WriteRating(User<?> logedInUser, Production production, JFrame previous) {
+    public WriteRating(User<?> loggedInUser, Production production, JFrame previous) {
         super("New Rating");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 600);
@@ -52,14 +52,24 @@ public class WriteRating extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Rating newRating = new Rating();
-                newRating.setUsername(logedInUser.getUsername());
+                newRating.setUsername(loggedInUser.getUsername());
                 try {
                     newRating.setGrade((Integer) grade.getSelectedItem());
                     newRating.setComment(comment.getText());
                     production.addRating(newRating);
                     production.updateAverageRating();
+                    production.addObserver(loggedInUser, Event.RATED_PRODUCTION_REVIEW);
+                    if (production instanceof Movie) {
+                        production.notifyObserver(Event.FAVORITE_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                        production.notifyObserver(Event.RATED_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                        production.notifyObserver(Event.ADDED_PRODUCTION_REVIEW, "Filmul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                    } else {
+                        production.notifyObserver(Event.FAVORITE_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                        production.notifyObserver(Event.RATED_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                        production.notifyObserver(Event.ADDED_PRODUCTION_REVIEW, "Serialul ", production.getTitle(), loggedInUser.getUsername(), newRating.getGrade());
+                    }
                     dispose();
-                    new ProductionInfo(production, logedInUser);
+                    new ProductionInfo(production, loggedInUser);
                     previous.dispose();
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(WriteRating.this, "You must select a grade!");

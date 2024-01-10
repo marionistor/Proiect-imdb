@@ -95,6 +95,7 @@ public class Admin extends Staff {
         return false;
     }
 
+    // generate random string of given length
     public static String generateRandomString(int stringLength) {
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+?,.:;%";
         StringBuilder randomString = new StringBuilder();
@@ -108,12 +109,14 @@ public class Admin extends Staff {
         return randomString.toString();
     }
 
+    // generate password
     public String generatePassword(String name) {
         Random random = new Random();
 
         String nameWithoutSpace = name.replaceAll(" ", "");
         StringBuilder password = new StringBuilder();
 
+        // change letters on even positions with random characters from generateRandomString
         for (int i = 0; i < nameWithoutSpace.length(); i ++) {
             String generatedChar = generateRandomString(1);
             if (i % 2 == 0) {
@@ -123,9 +126,11 @@ public class Admin extends Staff {
             }
         }
 
+        // final password obtained by previous name and 2 random chars at the beginning and end
         return generateRandomString(2 ) + password.toString() + generateRandomString(2);
     }
 
+    // name with "_" plus 5 random chars
     public String generateUsername(String name) {
         String[] firstLastName = name.split(" ");
         if (firstLastName.length == 2) {
@@ -161,6 +166,12 @@ public class Admin extends Staff {
             production.updateAverageRating();
         }
 
+        for (Object favorite : user.getFavoritesSet()) {
+            if (favorite instanceof Production) {
+                ((Production) favorite).removeObserver(user, Event.FAVORITE_PRODUCTION_REVIEW);
+            }
+        }
+
         RequestHolder.TeamRequestsList.removeIf(request -> request.getCreator() != null && request.getCreator().equals(username));
         for (User<?> u : IMDB.getInstance().getUsersList()) {
             if (u instanceof Staff) {
@@ -172,6 +183,14 @@ public class Admin extends Staff {
             commonContributionsList.addAll(((Staff) user).getContributions());
             if (user instanceof Contributor) {
                 RequestHolder.TeamRequestsList.addAll(((Contributor) user).getIndividualRequestsList());
+                for (Object contribution : ((Contributor) user).getContributions()) {
+                    if (contribution instanceof Production) {
+                        ((Production) contribution).removeObserver(user, Event.ADDED_PRODUCTION_REVIEW);
+                        for (Admin admin : IMDB.getInstance().getAdmins()) {
+                            ((Production) contribution).addObserver(admin, Event.ADDED_PRODUCTION_REVIEW);
+                        }
+                    }
+                }
             }
         }
     }

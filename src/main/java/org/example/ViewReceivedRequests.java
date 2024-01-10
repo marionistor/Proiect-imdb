@@ -86,7 +86,10 @@ public class ViewReceivedRequests extends JFrame {
                         } else {
                             loggedInUser.getIndividualRequestsList().remove(request);
                         }
-                        //notify
+                        if (request.getCreator() != null) {
+                            User<?> creatorUser = IMDB.getInstance().getUser(request.getCreator());
+                            creatorUser.notifyUser(loggedInUser, Event.REJECTED_REQUEST, null);
+                        }
                         new ViewReceivedRequests(loggedInUser);
                         dispose();
                     }
@@ -102,7 +105,10 @@ public class ViewReceivedRequests extends JFrame {
                         } else {
                             loggedInUser.getIndividualRequestsList().remove(request);
                         }
-                        //notify
+                        if (request.getCreator() != null) {
+                            User<?> creatorUser = IMDB.getInstance().getUser(request.getCreator());
+                            creatorUser.notifyUser(loggedInUser, Event.SOLVED_REQUEST, null);
+                        }
                         new ViewReceivedRequests(loggedInUser);
                         dispose();
                     }

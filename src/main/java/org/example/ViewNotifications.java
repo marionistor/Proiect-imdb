@@ -25,7 +25,7 @@ public class ViewNotifications extends JFrame {
             notificationsPanel.add(noNotificationsMsg);
             getContentPane().add(notificationsPanel);
         } else {
-            setSize(1000, 300);
+            setSize(1200, 300);
             notificationsList = new ArrayList<>();
             notificationsList.addAll(loggedInUser.getUserNotifications());
 

@@ -125,7 +125,15 @@ public class IMDB {
         }
         return null;
     }
-
+    public List<Admin> getAdmins() {
+        List<Admin> admins = new ArrayList<>();
+        for (User<?> user : usersList) {
+            if (user instanceof Admin) {
+                admins.add((Admin) user);
+            }
+        }
+        return admins;
+    }
     public Actor getActor(String actorName) {
         for (Actor actor : actorsList) {
             if (actor.getName().equals(actorName)) {
@@ -346,14 +354,10 @@ public class IMDB {
                 JSONArray actors = (JSONArray) object.get("actors");
                 for (Object actor : actors) {
                     if (!searchActorName(actor.toString())) {
-                        Actor a = new Actor();
-                        a.setName(actor.toString());
-                        a.addPerformance(title.toString(), type);
-
                         Request request = new Request();
                         request.setRequestType(RequestTypes.OTHERS);
                         request.setSolver("ADMIN");
-                        String description = "Please add the actor " + actor +".";
+                        String description = "Please add the actor " + actor +" with performance "  + title + " and type " + type + ".";
                         request.setDescription(description);
                         request.setTitleName(actor.toString());
                         ZonedDateTime date = ZonedDateTime.now();
@@ -362,8 +366,7 @@ public class IMDB {
                         LocalDateTime dateTime = LocalDateTime.parse(dateStr, DTFormatter);
                         request.setDate(dateTime);
                         requestsList.add(request);
-                        new Admin.RequestHolder().addTeamRequest(request);
-                        // notify
+                        Admin.RequestHolder.TeamRequestsList.add(request);
                     }
                     newProduction.addActor(actor.toString());
                 }
@@ -513,18 +516,51 @@ public class IMDB {
             e.printStackTrace();
         }
     }
+
+    public void addObservers() {
+        for (User<?> user : usersList) {
+            if (user instanceof Staff) {
+                for (Object contribution : ((Staff) user).getContributions()) {
+                    if (contribution instanceof Production) {
+                        ((Production) contribution).addObserver(user, Event.ADDED_PRODUCTION_REVIEW);
+                    }
+                }
+            }
+            for (Object favorite : user.getFavoritesSet()) {
+                if (favorite instanceof Production) {
+                    ((Production) favorite).addObserver(user, Event.FAVORITE_PRODUCTION_REVIEW);
+                }
+            }
+        }
+
+        for (Production production : productionsList) {
+            for (Rating rating : production.getRatings()) {
+                User<?> user = getUserByName(rating.getUsername());
+                production.addObserver(user, Event.RATED_PRODUCTION_REVIEW);
+            }
+        }
+    }
+
     public void run() {
         parseActors();
         parseProduction();
         parseAccounts();
         parseRequests();
 
+        addObservers();
+
+        // notify user about parsed requests
         for (Request request : requestsList) {
+            User<?> creatorUser = getUserByName(request.getCreator());
             if (request.getSolver().equals("ADMIN")) {
                 Admin.RequestHolder.TeamRequestsList.add(request);
+                for (Admin admin : getAdmins()) {
+                    creatorUser.notifyUser(admin, Event.ADMIN_RECEIVED_REQUESTS, request.getDescription());
+                }
             } else {
-                User<?> user = getUserByName(request.getSolver());
-                ((Staff) user).getIndividualRequestsList().add(request);
+                User<?> solverUser = getUserByName(request.getSolver());
+                ((Staff) solverUser).getIndividualRequestsList().add(request);
+                creatorUser.notifyUser(solverUser, Event.RECEIVED_REQUEST, request.getDescription());
             }
         }
 

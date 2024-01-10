@@ -26,7 +26,7 @@ public class ProductionInfo extends JFrame {
     private JButton removeFromFavorites;
     private JButton refresh;
 
-    public ProductionInfo(Production production, User logedInUser) {
+    public ProductionInfo(Production production, User loggedInUser) {
         super("Production info");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -168,10 +168,11 @@ public class ProductionInfo extends JFrame {
         addToFavorites.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (logedInUser.getFavoritesSet().contains(production)) {
+                if (loggedInUser.getFavoritesSet().contains(production)) {
                     JOptionPane.showMessageDialog(ProductionInfo.this, "Already added to favorites!");
                 } else {
-                    logedInUser.addFavorite(production);
+                    production.addObserver(loggedInUser, Event.FAVORITE_PRODUCTION_REVIEW);
+                    loggedInUser.addFavorite(production);
                 }
             }
         });
@@ -181,10 +182,10 @@ public class ProductionInfo extends JFrame {
         addRating.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (production.isRated(logedInUser.getUsername())) {
+                if (production.isRated(loggedInUser.getUsername())) {
                     JOptionPane.showMessageDialog(ProductionInfo.this, "Already added a review!");
                 } else {
-                    new WriteRating(logedInUser, production, ProductionInfo.this);
+                    new WriteRating(loggedInUser, production, ProductionInfo.this);
                 }
             }
         });
@@ -194,13 +195,14 @@ public class ProductionInfo extends JFrame {
         removeRating.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!production.isRated(logedInUser.getUsername())) {
+                if (!production.isRated(loggedInUser.getUsername())) {
                     JOptionPane.showMessageDialog(ProductionInfo.this, "No review added!");
                 } else {
-                    Rating rating = production.getRating(logedInUser.getUsername());
+                    production.removeObserver(loggedInUser, Event.RATED_PRODUCTION_REVIEW);
+                    Rating rating = production.getRating(loggedInUser.getUsername());
                     production.removeRating(rating);
                     production.updateAverageRating();
-                    new ProductionInfo(production, logedInUser);
+                    new ProductionInfo(production, loggedInUser);
                     dispose();
                 }
             }
@@ -211,10 +213,11 @@ public class ProductionInfo extends JFrame {
         removeFromFavorites.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!logedInUser.getFavoritesSet().contains(production)) {
+                if (!loggedInUser.getFavoritesSet().contains(production)) {
                     JOptionPane.showMessageDialog(ProductionInfo.this, "Production isn't added to favorites!");
                 } else {
-                    logedInUser.removeFavorite(production);
+                    production.removeObserver(loggedInUser, Event.FAVORITE_PRODUCTION_REVIEW);
+                    loggedInUser.removeFavorite(production);
                 }
             }
         });
@@ -224,7 +227,7 @@ public class ProductionInfo extends JFrame {
         refresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ProductionInfo(production, logedInUser);
+                new ProductionInfo(production, loggedInUser);
                 dispose();
             }
         });
@@ -245,7 +248,7 @@ public class ProductionInfo extends JFrame {
         productionPanel.add(new JLabel());
         productionPanel.add(favoritesPanel);
         productionPanel.add(new JLabel());
-        if (logedInUser instanceof Regular) {
+        if (loggedInUser instanceof Regular) {
             productionPanel.add(addRatingPanel);
             productionPanel.add(new JLabel());
         }
