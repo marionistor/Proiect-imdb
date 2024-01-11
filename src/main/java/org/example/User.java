@@ -156,29 +156,6 @@ public abstract class User<T extends Comparable<T>> implements Observer {
         userNotifications.remove(notification);
     }
 
-    public void notifyUser(User<?> user, Event event, String request) {
-        String notification;
-        switch (event) {
-            case SOLVED_REQUEST:
-                notification = "Cererea trimisa a fost rezolvata de catre utilizatorul \"" + user.getUsername() + "\"";
-                update(notification);
-                break;
-            case REJECTED_REQUEST:
-                notification = "Cererea trimisa a fost refuzata de catre utilizatorul \"" + user.getUsername() + "\"";
-                update(notification);
-                break;
-            case RECEIVED_REQUEST:
-                notification = "Cerere noua de la \"" + user.getUsername() + "\": " + request;
-                update(notification);
-                break;
-            case ADMIN_RECEIVED_REQUESTS:
-                notification = "Cerere noua pentru echipa de admini de la \"" + getUsername() + "\": " + request;
-                user.update(notification);
-                break;
-            default:
-                break;
-        }
-    }
     // add elements in favorites list
     public void addFavorite(Object favorite) {
         favoritesSet.add((T) favorite);

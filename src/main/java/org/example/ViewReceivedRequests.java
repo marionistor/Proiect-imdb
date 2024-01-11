@@ -95,7 +95,9 @@ public class ViewReceivedRequests extends JFrame {
                             solverUser.removeNotifications(notification);
                         }
                         User<?> creatorUser = IMDB.getInstance().getUserByName(request.getCreator());
-                        creatorUser.notifyUser(loggedInUser, Event.REJECTED_REQUEST, null);
+                        request.addObserver(creatorUser, Event.REJECTED_REQUEST);
+                        request.notifyObserver(Event.REJECTED_REQUEST, null, loggedInUser.getUsername(), 0, null);
+                        request.removeObserver(creatorUser, Event.REJECTED_REQUEST);
                         if (creatorUser instanceof Regular) {
                             ((Regular) creatorUser).getCreatedRequests().remove(request);
                         }
@@ -131,7 +133,9 @@ public class ViewReceivedRequests extends JFrame {
                         }
                         User<?> creatorUser = IMDB.getInstance().getUserByName(request.getCreator());
                         if (request.getRequestType() != RequestTypes.DELETE_ACCOUNT) {
-                            creatorUser.notifyUser(loggedInUser, Event.SOLVED_REQUEST, null);
+                            request.addObserver(creatorUser, Event.SOLVED_REQUEST);
+                            request.notifyObserver(Event.SOLVED_REQUEST, null, loggedInUser.getUsername(), 0, null);
+                            request.removeObserver(creatorUser, Event.SOLVED_REQUEST);
                         }
                         if (creatorUser instanceof Regular) {
                             ((Regular) creatorUser).getCreatedRequests().remove(request);

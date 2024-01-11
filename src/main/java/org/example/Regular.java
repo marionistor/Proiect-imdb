@@ -32,12 +32,18 @@ public class Regular extends User implements RequestsManager {
         if (r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
             Admin.RequestHolder.TeamRequestsList.add(r);
             for (Admin admin : IMDB.getInstance().getAdmins()) {
-                creatorUser.notifyUser(admin, Event.ADMIN_RECEIVED_REQUESTS, r.getDescription());
+                r.addObserver(admin, Event.ADMIN_RECEIVED_REQUESTS);
+            }
+            r.notifyObserver(Event.ADMIN_RECEIVED_REQUESTS, null, creatorUser.getUsername(), 0, null);
+            for (Admin admin : IMDB.getInstance().getAdmins()) {
+                r.removeObserver(admin, Event.ADMIN_RECEIVED_REQUESTS);
             }
         } else {
             contributor.addIndividualRequest(r);
             User<?> solverUser = IMDB.getInstance().getUserByName(r.getSolver());
-            solverUser.notifyUser(creatorUser, Event.RECEIVED_REQUEST, r.getDescription());
+            r.addObserver(solverUser, Event.RECEIVED_REQUEST);
+            r.notifyObserver(Event.RECEIVED_REQUEST, null, creatorUser.getUsername(), 0, null);
+            r.removeObserver(solverUser, Event.RECEIVED_REQUEST);
         }
         addCreatedRequest(r);
     }

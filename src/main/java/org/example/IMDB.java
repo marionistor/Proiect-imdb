@@ -568,12 +568,18 @@ public class IMDB {
             if (request.getSolver().equals("ADMIN")) {
                 Admin.RequestHolder.TeamRequestsList.add(request);
                 for (Admin admin : getAdmins()) {
-                    creatorUser.notifyUser(admin, Event.ADMIN_RECEIVED_REQUESTS, request.getDescription());
+                    request.addObserver(admin, Event.ADMIN_RECEIVED_REQUESTS);
+                }
+                request.notifyObserver(Event.ADMIN_RECEIVED_REQUESTS, null, creatorUser.getUsername(), 0, null);
+                for (Admin admin : getAdmins()) {
+                    request.removeObserver(admin, Event.ADMIN_RECEIVED_REQUESTS);
                 }
             } else {
                 User<?> solverUser = getUserByName(request.getSolver());
                 ((Staff) solverUser).getIndividualRequestsList().add(request);
-                creatorUser.notifyUser(solverUser, Event.RECEIVED_REQUEST, request.getDescription());
+                request.addObserver(solverUser, Event.RECEIVED_REQUEST);
+                request.notifyObserver(Event.RECEIVED_REQUEST, null, creatorUser.getUsername(), 0, null);
+                request.removeObserver(solverUser, Event.RECEIVED_REQUEST);
             }
             if (creatorUser instanceof Regular) {
                 ((Regular) creatorUser).addCreatedRequest(request);

@@ -42,7 +42,7 @@ public abstract class Production implements Comparable<Object>, Subject {
     }
 
     @Override
-    public void notifyObserver(Event event, String type, String title, String username, int rating, String ratingUsername) {
+    public void notifyObserver(Event event, String type, String username, int rating, String ratingUsername) {
         String notification;
 
         for (User<?> user : userObservers.get(event)) {
