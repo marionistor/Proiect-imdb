@@ -20,12 +20,12 @@ public class Contributor extends Staff implements RequestsManager {
         createdRequests.add(r);
     }
     public void removeCreatedRequest(Request r) {
-        createdRequests.add(r);
+        createdRequests.remove(r);
     }
     @Override
     public void createRequest(Request r, Staff contributor) {
-        User<?> creatorUser = IMDB.getInstance().getUser(r.getCreator());
-        if (r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
+        User<?> creatorUser = IMDB.getInstance().getUserByName(r.getCreator());
+        if (contributor == null || r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
             new Admin.RequestHolder().addTeamRequest(r);
             for (Admin admin : IMDB.getInstance().getAdmins()) {
                 r.addObserver(admin, Event.ADMIN_RECEIVED_REQUESTS);
@@ -36,7 +36,7 @@ public class Contributor extends Staff implements RequestsManager {
             }
         } else {
             contributor.addIndividualRequest(r);
-            User<?> solverUser = IMDB.getInstance().getUser(r.getSolver());
+            User<?> solverUser = IMDB.getInstance().getUserByName(r.getSolver());
             r.addObserver(solverUser, Event.RECEIVED_REQUEST);
             r.notifyObserver(Event.RECEIVED_REQUEST, null, creatorUser.getUsername(), 0, null);
             r.removeObserver(solverUser, Event.RECEIVED_REQUEST);
@@ -47,7 +47,7 @@ public class Contributor extends Staff implements RequestsManager {
     @Override
     public void removeRequest(Request r, Staff contributor) {
         String notification;
-        if (r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
+        if (contributor == null || r.getRequestType() == RequestTypes.OTHERS || r.getRequestType() == RequestTypes.DELETE_ACCOUNT) {
             new Admin.RequestHolder().removeTeamRequest(r);
             for (Admin admin : IMDB.getInstance().getAdmins()) {
                 notification = "Cerere noua pentru echipa de admini de la \"" + r.getCreator() + "\": " + r.getDescription();
@@ -56,7 +56,7 @@ public class Contributor extends Staff implements RequestsManager {
         } else {
             contributor.removeIndividualRequest(r);
             notification = "Cerere noua de la \"" + r.getCreator() + "\": " +r.getDescription();
-            User<?> solverUser = IMDB.getInstance().getUser(r.getSolver());
+            User<?> solverUser = IMDB.getInstance().getUserByName(r.getSolver());
             solverUser.removeNotifications(notification);
         }
         removeCreatedRequest(r);

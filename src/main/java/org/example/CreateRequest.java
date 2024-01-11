@@ -17,7 +17,7 @@ public class CreateRequest extends JFrame {
     private JComboBox<String> ProductionsActorsNames;
     private Staff contributor;
 
-    public CreateRequest(User logedInUser) {
+    public CreateRequest(User<?> logedInUser) {
         super("Create Request");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 600);
@@ -57,9 +57,9 @@ public class CreateRequest extends JFrame {
                 requestInfoPanel.removeAll();
                 requestInfoPanel.add(requestTypePanel);
                 requestInfoPanel.add(new JLabel());
-                try {
-                    RequestTypes type = (RequestTypes) requestTypesJComboBox.getSelectedItem();
+                RequestTypes type = (RequestTypes) requestTypesJComboBox.getSelectedItem();
 
+                if (type != null) {
                     if ((type == RequestTypes.MOVIE_ISSUE || type == RequestTypes.ACTOR_ISSUE)) {
                         if (type == RequestTypes.MOVIE_ISSUE) {
                             ProductionsActorsNames = new JComboBox<>(IMDB.getInstance().getProductionsNames(logedInUser));
@@ -99,9 +99,15 @@ public class CreateRequest extends JFrame {
                                     newRequest.setSolver("ADMIN");
                                 } else {
                                     String titleName = (String) ProductionsActorsNames.getSelectedItem();
+
                                     newRequest.setTitleName(titleName);
                                     contributor = IMDB.getInstance().contributorUser(titleName);
-                                    String solver = contributor.getUsername();
+                                    String solver;
+                                    if (contributor != null) {
+                                        solver = contributor.getUsername();
+                                    } else {
+                                        solver = "ADMIN";
+                                    }
                                     newRequest.setSolver(solver);
                                 }
                                 newRequest.setDescription(descriptionStr);
@@ -126,7 +132,7 @@ public class CreateRequest extends JFrame {
                     requestInfoPanel.add(createRequest);
                     revalidate();
                     repaint();
-                } catch (Exception exception) {
+                } else {
                     JOptionPane.showMessageDialog(CreateRequest.this, "You must select an option!");
                 }
             }

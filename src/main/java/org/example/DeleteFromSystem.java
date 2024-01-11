@@ -13,14 +13,29 @@ public class DeleteFromSystem extends JFrame {
         super("Delete Production/Actor from System");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 300);
-
-        String[] contributionsStr = new String[logedInUser.getContributions().size()];
+        String[] contributionsStr;
+        if (logedInUser instanceof Admin) {
+             contributionsStr = new String[logedInUser.getContributions().size() + Admin.commonContributionsList.size()];
+        } else {
+            contributionsStr = new String[logedInUser.getContributions().size()];
+        }
         int index = 0;
         for (Object contribution : logedInUser.getContributions()) {
             if (contribution instanceof Actor) {
                 contributionsStr[index++] = ((Actor) contribution).getName();
-            } else if (contribution instanceof Production) {
+            }
+            if (contribution instanceof Production) {
                 contributionsStr[index++] = ((Production) contribution).getTitle();
+            }
+        }
+        if (logedInUser instanceof Admin) {
+            for (Object contribution : Admin.commonContributionsList) {
+                if (contribution instanceof Actor) {
+                    contributionsStr[index++] = ((Actor) contribution).getName();
+                }
+                if (contribution instanceof Production) {
+                    contributionsStr[index++] = ((Production) contribution).getTitle();
+                }
             }
         }
 

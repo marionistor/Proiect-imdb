@@ -48,20 +48,18 @@ public class ViewReceivedRequests extends JFrame {
                     requestPanel.setLayout(new GridLayout(7, 1));
                     titleName = new JLabel(request.getTitleName());
                     titleName.setForeground(Color.WHITE);
+                    type.setForeground(Color.YELLOW);
+                    requestPanel.add(type);
+                    requestPanel.add(titleName);
                 } else {
+                    type.setForeground(Color.YELLOW);
+                    requestPanel.add(type);
                     requestPanel.setLayout(new GridLayout(6, 1));
                 }
-
-                type.setForeground(Color.YELLOW);
-                requestPanel.add(type);
 
                 date = new JLabel("" + request.getDate());
                 date.setForeground(Color.WHITE);
                 requestPanel.add(date);
-
-                if (titleName != null) {
-                    requestPanel.add(titleName);
-                }
 
                 description = new JLabel(request.getDescription());
                 description.setForeground(Color.WHITE);

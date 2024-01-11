@@ -208,14 +208,22 @@ public class Admin extends Staff {
 
         if (user instanceof Staff) {
             commonContributionsList.addAll(((Staff) user).getContributions());
-            if (user instanceof Contributor) {
-                RequestHolder.TeamRequestsList.addAll(((Contributor) user).getIndividualRequestsList());
-                for (Object contribution : ((Contributor) user).getContributions()) {
-                    if (contribution instanceof Production) {
-                        ((Production) contribution).removeObserver(user, Event.ADDED_PRODUCTION_REVIEW);
-                        for (Admin admin : IMDB.getInstance().getAdmins()) {
-                            ((Production) contribution).addObserver(admin, Event.ADDED_PRODUCTION_REVIEW);
-                        }
+            for (Request r : ((Staff) user).getIndividualRequestsList()) {
+                r.setSolver("ADMIN");
+                RequestHolder.TeamRequestsList.add(r);
+                for (Admin admin : IMDB.getInstance().getAdmins()) {
+                    r.addObserver(admin, Event.ADMIN_RECEIVED_REQUESTS);
+                }
+                r.notifyObserver(Event.ADMIN_RECEIVED_REQUESTS, null, r.getCreator(), 0, null);
+                for (Admin admin : IMDB.getInstance().getAdmins()) {
+                    r.removeObserver(admin, Event.ADMIN_RECEIVED_REQUESTS);
+                }
+            }
+            for (Object contribution : ((Contributor) user).getContributions()) {
+                if (contribution instanceof Production) {
+                    ((Production) contribution).removeObserver(user, Event.ADDED_PRODUCTION_REVIEW);
+                    for (Admin admin : IMDB.getInstance().getAdmins()) {
+                        ((Production) contribution).addObserver(admin, Event.ADDED_PRODUCTION_REVIEW);
                     }
                 }
             }

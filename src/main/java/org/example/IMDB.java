@@ -86,7 +86,19 @@ public class IMDB {
         return null;
     }
     public String[] getProductionsNames(User<?> user) {
-        String[] prodNames = new String[productionsList.size()];
+        String[] prodNames;
+        if (user instanceof Contributor) {
+            int nrProd = 0;
+            for (Object contribution : ((Contributor) user).getContributions()) {
+                if (contribution instanceof Production) {
+                    nrProd++;
+                }
+            }
+            prodNames = new String[productionsList.size() - nrProd];
+        } else {
+            prodNames = new String[productionsList.size()];
+        }
+
         int index = 0;
         for (Production production : productionsList) {
             if (user instanceof Contributor) {
@@ -100,15 +112,28 @@ public class IMDB {
         return prodNames;
     }
     public String[] getActorsNames(User<?> user) {
-        String[] actorsNames = new String[actorsList.size()];
+        String[] actorsNames;
+        if (user instanceof Contributor) {
+            int nrActors = 0;
+            for (Object contribution : ((Contributor) user).getContributions()) {
+                if (contribution instanceof Actor) {
+                    nrActors++;
+                }
+            }
+            actorsNames = new String[actorsList.size() - nrActors];
+        } else {
+            actorsNames = new String[actorsList.size()];
+        }
+
         int index = 0;
         for (Actor actor : actorsList) {
             if (user instanceof Contributor) {
                 if (!((Contributor) user).getContributions().contains(actor)) {
                     actorsNames[index++] = actor.getName();
                 }
+            } else {
+                actorsNames[index++] = actor.getName();
             }
-            actorsNames[index++] = actor.getName();
         }
         return actorsNames;
     }
